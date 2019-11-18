@@ -10,7 +10,7 @@ name = "sparkle-session"
 summary = "Spark Session and DataFrame extensions"
 description = "Common patterns and often used code from dozens of pyspark projects available at your fingertips"
 default_task = ["clean", "analyze", "publish"]
-version = "1.0.1"
+version = "1.1.0.dev"
 
 url = "https://github.com/machielg/sparkle-session/"
 licence = "GPLv3+"

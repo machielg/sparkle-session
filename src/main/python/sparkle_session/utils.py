@@ -1,7 +1,7 @@
 import inspect
 
 
-def _to_instance(n):
+def to_instance(n):
     if inspect.isclass(n):
         return n()
     else:
@@ -15,13 +15,12 @@ def _to_type(n):
         return type(n)
 
 
-def _get_class_name(fr):
+def get_class_name(fr):
     c = _get_class_from_frame(fr)
     if c:
         return c.__name__
     else:
         return None
-
 
 def _get_class_from_frame(fr):
     args, _, _, value_dict = inspect.getargvalues(fr)

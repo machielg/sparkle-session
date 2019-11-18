@@ -1,15 +1,30 @@
 from pyspark.sql.types import LongType
 from sparkle_test import SparkleTestCase
 
-from sparkle_session import sparkle_df, SparkleDataFrame
+from sparkle_session import SparkleStructType
+from sparkle_session.dataframe import sparkle_df, SparkleDataFrame
 
 
 class SparkleDataFrameTestCase(SparkleTestCase):
 
-    def test_type(self):
+    def setUp(self):
         df = self.spark.createDataFrame([(1, 2), (3, 4)], ["a", "b"])
+        self.sdf = sparkle_df(df)
+
+    def test_to_ddl(self):
+        self.assertEqual("`a` BIGINT,`b` BIGINT", self.sdf.toDDL())
+        self.assertEqual("`a` BIGINT", self.sdf.toDDL("b"))
+        self.assertEqual("", self.sdf.toDDL("a", "b"))
+
+    def test_type(self):
+        self.assertIsInstance(self.sdf, SparkleDataFrame)
+
+    def test_drop(self):
+        df = self.spark.createDataFrame([(1, "y"), (3, "z")], ["a", "b"])
         sdf = sparkle_df(df)
-        self.assertIsInstance(sdf, SparkleDataFrame)
+        self.assertNotIn("a", sdf.dropOfType('bigint').columns)
+        self.assertIn("b", sdf.dropOfType('bigint').columns)
+        self.assertNotIn("b", sdf.dropOfType('string').columns)
 
     def test_all_any(self):
         df = self.spark.createDataFrame([(1, 2), (3, 4)], ["a", "b"])
@@ -44,3 +59,13 @@ class SparkleDataFrameTestCase(SparkleTestCase):
         df1 = self.spark.createDataFrame([(1,), (2,), (0,)], ["a"])
         sdf1 = sparkle_df(df1)
         self.assertEqual(2, sdf1.maxValue("a"))
+
+    def test_stay_sparkle(self):
+        df1 = self.spark.createDataFrame([(1,)], ["a"])
+        sdf1 = sparkle_df(df1)
+        self.assertIsInstance(sdf1, SparkleDataFrame)
+        self.assertIsInstance(sdf1.select("a"), SparkleDataFrame)
+        self.assertIsInstance(sdf1.drop("a"), SparkleDataFrame)
+        self.assertIsInstance(sdf1.sort('a'), SparkleDataFrame)
+        self.assertIsInstance(sdf1.schema, SparkleStructType)
+

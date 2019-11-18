@@ -1,6 +1,6 @@
 from sparkle_test import SparkleTestCase
 
-from sparkle_session import session_sparkle
+from sparkle_session.session import session_sparkle
 
 
 class SparkleSessionTestCase(SparkleTestCase):

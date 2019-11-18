@@ -28,3 +28,8 @@ class SparkleStructTypeTestCase(TestCase):
         s = SparkleStructType(fields=[StructField("a", IntegerType()), StructField("b", IntegerType())])
         self.assertListEqual(['a', 'b'], s.colsOfType(IntegerType()))
         self.assertListEqual(['a', 'b'], s.colsOfType(IntegerType))
+
+    def test_exclude(self):
+        s = SparkleStructType(fields=[StructField("a", IntegerType()), StructField("b", IntegerType())])
+        self.assertListEqual(['b'], s.colsOfType(IntegerType(), "a"))
+        self.assertListEqual(['a'], s.colsOfType(IntegerType(), "b"))

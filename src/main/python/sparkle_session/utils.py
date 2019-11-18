@@ -22,6 +22,7 @@ def get_class_name(fr):
     else:
         return None
 
+
 def _get_class_from_frame(fr):
     args, _, _, value_dict = inspect.getargvalues(fr)
     # we check the first parameter for the frame function is

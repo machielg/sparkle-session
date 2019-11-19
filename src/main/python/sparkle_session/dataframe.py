@@ -14,8 +14,6 @@ from sparkle_session.session import SparkleSession, session_sparkle
 from sparkle_session.utils import to_instance
 
 
-
-
 def agg_sparkle(self, *exprs):
     r = self.agg_orig(*exprs)
     return sparkle_df(r)

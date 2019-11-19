@@ -1,4 +1,6 @@
 from abc import ABC
+from types import MethodType
+
 from typing import Union, Tuple, Type
 
 from pyspark.sql import DataFrame
@@ -10,6 +12,13 @@ from sparkle_session import SparkleStructType, sparkle_struct_type
 from sparkle_session.create_table import CreateTable
 from sparkle_session.session import SparkleSession, session_sparkle
 from sparkle_session.utils import to_instance
+
+
+
+
+def agg_sparkle(self, *exprs):
+    r = self.agg_orig(*exprs)
+    return sparkle_df(r)
 
 
 # noinspection PyPep8Naming
@@ -111,6 +120,12 @@ class SparkleDataFrame(ABC, DataFrame):
         else:
             return attr
 
+    def groupBy(self, *cols):
+        g = super().groupBy(*cols)
+        g.agg_orig = g.agg
+        g.agg = MethodType(agg_sparkle, g)
+        return g
+
 
 DataFrame.isEmpty = SparkleDataFrame.isEmpty
 DataFrame.any = SparkleDataFrame.any
@@ -121,6 +136,7 @@ DataFrame.requireColumn = SparkleDataFrame.requireColumn
 DataFrame.maxValue = SparkleDataFrame.maxValue
 DataFrame.cast = SparkleDataFrame.cast
 DataFrame.toDDL = SparkleDataFrame.toDDL
+DataFrame.dropOfType = SparkleDataFrame.dropOfType
 
 
 def sparkle_df(df) -> SparkleDataFrame:

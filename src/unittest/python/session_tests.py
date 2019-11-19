@@ -16,3 +16,4 @@ class SparkleSessionTestCase(SparkleTestCase):
         log = session.log()
         self.assertIsNotNone(log)
         log.error("some error trace")
+        session.log("mylog", "info").info("some info message")

@@ -1,3 +1,4 @@
+import pyspark.sql.functions as f
 from pyspark.sql.types import LongType
 from sparkle_test import SparkleTestCase
 
@@ -68,4 +69,6 @@ class SparkleDataFrameTestCase(SparkleTestCase):
         self.assertIsInstance(sdf1.drop("a"), SparkleDataFrame)
         self.assertIsInstance(sdf1.sort('a'), SparkleDataFrame)
         self.assertIsInstance(sdf1.schema, SparkleStructType)
+
+        self.assertIsInstance(sdf1.groupBy('a').agg(f.max('a'), f.max('a')), SparkleDataFrame)
 

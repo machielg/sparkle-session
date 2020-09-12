@@ -17,9 +17,6 @@ class SparkleDataFrameTestCase(SparkleTestCase):
         self.assertEqual("`a` BIGINT", self.sdf.toDDL("b"))
         self.assertEqual("", self.sdf.toDDL("a", "b"))
 
-    def test_type(self):
-        self.assertIsInstance(self.sdf, SparkleDataFrame)
-
     def test_drop(self):
         df = self.spark.createDataFrame([(1, "y"), (3, "z")], ["a", "b"])
         sdf = sparkle_df(df)

@@ -1,11 +1,9 @@
-from abc import ABC
 from types import MethodType
-
 from typing import Union, Tuple, Type
 
 from pyspark.sql import DataFrame
 from pyspark.sql.functions import col
-from pyspark.sql.functions import max as s_max
+from pyspark.sql.functions import max as s_max, min as s_min
 from pyspark.sql.types import DataType, StructType
 
 from sparkle_session import SparkleStructType, sparkle_struct_type
@@ -20,7 +18,7 @@ def agg_sparkle(self, *exprs):
 
 
 # noinspection PyPep8Naming
-class SparkleDataFrame(ABC, DataFrame):
+class SparkleDataFrame(DataFrame):
     def any(self, condition) -> bool:
         return self.filter(condition).first() is not None
 
@@ -43,6 +41,9 @@ class SparkleDataFrame(ABC, DataFrame):
 
     def maxValue(self, col_name: str):
         return self.select(s_max(col_name).alias('max_val')).first().max_val
+
+    def minValue(self, col_name: str):
+        return self.select(s_min(col_name).alias('min_val')).first().min_val
 
     def cast(self, col_name: str, new_type: str):
         return self.withColumn(col_name, col(col_name).cast(new_type))
@@ -92,7 +93,7 @@ class SparkleDataFrame(ABC, DataFrame):
         s = self.schema.colsOfType(tipe, *exclude)
         return sparkle_df(self.drop(*s))
 
-    @property
+    @DataFrame.schema.getter
     def schema(self) -> SparkleStructType:
         return sparkle_struct_type(super().schema)
 
@@ -132,11 +133,22 @@ DataFrame.sparkle_union = SparkleDataFrame.easyUnion
 DataFrame.hasSameColumns = SparkleDataFrame.hasSameColumns
 DataFrame.requireColumn = SparkleDataFrame.requireColumn
 DataFrame.maxValue = SparkleDataFrame.maxValue
+DataFrame.minValue = SparkleDataFrame.minValue
 DataFrame.cast = SparkleDataFrame.cast
 DataFrame.toDDL = SparkleDataFrame.toDDL
 DataFrame.dropOfType = SparkleDataFrame.dropOfType
 
 
-def sparkle_df(df) -> SparkleDataFrame:
-    df.__class__ = SparkleDataFrame
+# DataFrame.sparkle_schema = SparkleDataFrame.sparkle_schema
+
+def extend_instance(obj, cls):
+    """Apply mixins to a class instance after creation"""
+    base_cls = obj.__class__
+    base_cls_name = obj.__class__.__name__
+    obj.__class__ = type(base_cls_name, (base_cls, cls), {})
+
+
+def sparkle_df(df: DataFrame) -> SparkleDataFrame:
+    df.__class__ = type('SparkleDataFrame', (SparkleDataFrame,), {})
+    # noinspection PyTypeChecker
     return df

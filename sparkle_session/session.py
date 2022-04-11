@@ -3,6 +3,8 @@ import inspect
 
 import re
 import types
+from collections.abc import Iterable
+
 from pyspark import _NoValue
 from pyspark.sql import DataFrame, SparkSession
 from pyspark.sql.conf import RuntimeConfig
@@ -101,7 +103,7 @@ class SparkleSession(SparkSession):
 
             if lgr.isDebugEnabled():
                 args = format_args()
-                if isinstance(args, collections.Iterable):
+                if isinstance(args, Iterable):
                     lgr.debug(msg.format(*args))
                 else:
                     lgr.debug(msg.format(args))

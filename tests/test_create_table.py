@@ -32,6 +32,5 @@ class CreateTableTestCase(SparkleTestCase):
         self.assertIsNotNone(r)
         create_stmt = self.spark.sql("SHOW CREATE TABLE foo").first()['createtab_stmt']
         self.assertIn("LOCATION", create_stmt)
-        self.assertIn("EXTERNAL", create_stmt)
         self.assertIn(table_location, create_stmt)
         self.assertIn('parquet', create_stmt.lower())

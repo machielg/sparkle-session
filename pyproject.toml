@@ -9,7 +9,7 @@ license = "GPL-3.0-or-later"
 python = ">=3.7.1,<4"
 
 [tool.poetry.dev-dependencies]
-pyspark = "^3.2.1"
+pyspark = "^3.2.2"
 sparkle-test = "^1.2.0"
 pytest = "^6.0.2"
 flakehell = "^0.6.1"
